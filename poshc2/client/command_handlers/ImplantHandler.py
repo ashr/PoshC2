@@ -205,9 +205,6 @@ def implant_handler_command_loop(user, printhelp="", autohide=None):
             if command.startswith("kill"):
                 do_del_task(user, command)
                 continue
-            if (command == "automigrate-frompowershell") or (command == "am"):
-                do_automigrate_frompowershell(user, command)
-                continue
             if command.startswith("show-serverinfo"):
                 do_show_serverinfo(user, command)
                 continue
@@ -669,16 +666,6 @@ def do_nuke_autoruns(user, command):
     clear()
 
 
-def do_automigrate_frompowershell(user, command):
-    print_bad("automigrate not currently implemented for the Python version of PoshC2\r\n")
-    input("Press Enter to continue...")
-    clear()
-
-
-def do_am(user, command):
-    return do_automigrate_frompowershell(user, command)
-
-
 def do_show_serverinfo(user, command):
     C2 = get_c2server_all()
     detailsformatted = "\nPayloadCommsHost: %s\nEncKey: %s\nDomainFrontHeader: %s\nDefaultSleep: %s\nKillDate: %s\nGET_404_Response: %s\nPoshProjectDirectory: %s\nQuickCommand: %s\nDownloadURI: %s\nDefaultProxyURL: %s\nDefaultProxyUser: %s\nDefaultProxyPass: %s\nURLS: %s\nSocksURLS: %s\nInsecure: %s\nUserAgent: %s\nReferer: %s\nPushover_APIToken: %s\nPushover_APIUser: %s\nEnableNotifications: %s\n" % (C2.PayloadCommsHost, C2.EncKey, C2.DomainFrontHeader, C2.DefaultSleep, C2.KillDate, C2.GET_404_Response, C2.PoshProjectDirectory, C2.QuickCommand, C2.DownloadURI, C2.ProxyURL, C2.ProxyUser, C2.ProxyPass, C2.URLS, C2.SocksURLS, C2.Insecure, C2.UserAgent, C2.Referrer, C2.Pushover_APIToken, C2.Pushover_APIUser, C2.EnableNotifications)
@@ -990,17 +977,11 @@ def do_createnewpayload(user, command, creds=None, shellcodeOnly=False):
     urlId = new_urldetails(name, comms_url, domainfront, proxyurl, proxyuser, proxypass, credsexpire)
     newPayload = Payloads(C2.KillDate, C2.EncKey, C2.Insecure, C2.UserAgent, C2.Referrer, imurl, PayloadsDirectory, URLID=urlId, PBindPipeName=pbindpipename, PBindSecret=pbindsecret)
 
-    newPayload.CreateDroppers("%s_" % name)
-    newPayload.CreateShellcode("%s_" % name)
-
-    if not shellcodeOnly:
-        newPayload.CreateRaw("%s_" % name)
-        newPayload.CreateDlls("%s_" % name)
-        newPayload.CreateEXE("%s_" % name)
-        newPayload.CreateMsbuild("%s_" % name)
-        newPayload.CreatePython("%s_" % name)
-        newPayload.CreateDonutShellcode("%s_" % name)
-        newPayload.BuildDynamicPayloads("%s_" % name)
+    if shellcodeOnly:
+        newPayload.CreateDroppers("%s_" % name)
+        newPayload.CreateShellcode("%s_" % name)
+    else:
+        newPayload.CreateAll("%s_" % name)
 
     print_good("Created new payloads")
     input("Press Enter to continue...")

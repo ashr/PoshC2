@@ -728,12 +728,12 @@ def do_startdaisy(user, command, randomuri):
 
     if domain_front:
         command = command + f" -domfront {domain_front}"
-    if proxy_user:
-        command = command + f" -proxyurl {proxy_url}"
     if proxy_url:
-        command = command + f" -proxyuser {proxy_user}"
+        command = command + f" -proxyurl '{proxy_url}'"
+    if proxy_user:
+        command = command + f" -proxyuser '{proxy_user}'"
     if proxy_pass:
-        command = command + f" -proxypassword {proxy_pass}"
+        command = command + f" -proxypassword '{proxy_pass}'"
 
     if elevated.lower() == "y" or elevated == "":
 

@@ -61,15 +61,12 @@ class UrlConfig:
         self.sockList = [sock1, sock2]
 
     def process(self, line):
-        output = urlparse(line).path
-        output = output.rpartition('/')[0]
+        output = urlparse(line).path.rstrip().lstrip('/').strip()
+        if not output:
+            return None
         output = output.replace("'", "")
-        if output != '':
-            if output[0] == "/":
-                output = output.lstrip('/')
-            if output[-1] != "/":
-                output = output + "/"
-        output = output.replace("'", "")
+        if output[-1] != "/":
+            output = output + "/"
         return output
 
     def getUrls(self):
@@ -77,9 +74,10 @@ class UrlConfig:
             array = []
             for line in input:
                 toAppend = self.process(line)
-                if toAppend != '':
-                    if toAppend != ' ':
-                        array.append(self.process(line))
+                if toAppend:
+                    processed = self.process(line)
+                    if processed:
+                        array.append(processed)
             self.urlList = list(set(array))
         if len(self.urlList) < 3:
             print(f"{Colours.RED}Please add three or more URLs to the url list at resources/urls.txt (the more the better){Colours.END}")
